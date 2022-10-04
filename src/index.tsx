@@ -4,6 +4,8 @@ import { create } from 'enmity/patcher';
 import { bulk, filters } from 'enmity/metro';
 import { FormRow } from 'enmity/components';
 import { MessageEmojiActionSheetArgs } from './types';
+import CameraRoll from '@react-native-camera-roll/camera-roll';
+import RNFetchBlob from 'rn-fetch-blob';
 
 import styles from './styles';
 import icons from './icons';
@@ -30,24 +32,36 @@ const CopyEmojiSource: Plugin = {
           // A customEmoji is one that has a `src` attribute, i.e. it was uploaded by someone to a guild.
           if (emojiNode.type === 'customEmoji') {
             children.push(
-              <FormRow style={styles.copyLink} label='Copy image link' onPress={() => {
-                Clipboard.setString(emojiNode.src);
-                Toasts.open({ content: 'Copied to clipboard', source: icons.copy });
-                hideActionSheet();
-              }} />,
-            );
+              <FormRow style={styles.copyLink} label='Save Image' onPress={() => {
+                RNFetchBlob.config({
+                  fileCache: true,
+                  appendExt: 'png',
+                })
+                  .fetch('GET', this.state.url)
+                  .then(res => {
+                    CameraRoll.saveToCameraRoll(res.data, 'photo')
+                      .then(res => console.log(res))
+                      .catch(err => console.log(err))
+                  })
+                  .catch(error => console.log(error));
+              
+            Toasts.open({ content: 'Saved to device', source: icons.copy });
+            hideActionSheet();
           }
+        } />,
+        );
+      }
 
           res.props.children.props.children = children;
-        });
+    });
 
-        unpatch();
-      });
+    unpatch();
+  });
     });
   },
-  onStop() {
-    Patcher.unpatchAll();
-  },
+onStop() {
+  Patcher.unpatchAll();
+},
 };
 
 registerPlugin(CopyEmojiSource);

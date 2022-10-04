@@ -1,11 +1,11 @@
 {
-  "name": "copy-emoji-source",
+  "name": "save-emoji-source",
   "version": "1.0.0",
-  "description": "Allows you to copy the image for any emoji",
+  "description": "Allows you to save the image for any emoji",
   "authors": [
     {
-      "name": "Conor",
-      "id": "843135686173392946"
+      "name": "Roizor",
+      "id": "703027154870468629"
     }
   ]
 }
